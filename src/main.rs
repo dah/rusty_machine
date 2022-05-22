@@ -1,17 +1,16 @@
 #[derive(PartialEq, Debug, Clone)]
-enum TankType { 
-    Etch, 
-    EtchRinse, 
-    Clean, 
-    CleanRinse, 
-    DIRinse, 
-    Cool, 
-    Oven, 
-    Grey, 
-    Primer, 
-    Lacquer, 
-} 
-
+enum TankType {
+    Etch,
+    EtchRinse,
+    Clean,
+    CleanRinse,
+    DIRinse,
+    Cool,
+    Oven,
+    Grey,
+    Primer,
+    Lacquer,
+}
 
 #[derive(PartialEq, Debug, Clone)]
 enum BasketStatus {
@@ -46,7 +45,7 @@ impl Step {
             if self.remaining_time == 0 {
                 return true;
             }
-        } 
+        }
         return false;
     }
 }
@@ -56,7 +55,9 @@ struct Recipe {
 }
 
 impl Recipe {
-    fn new(steps: Vec<Step>) -> Self { Self { steps } }
+    fn new(steps: Vec<Step>) -> Self {
+        Self { steps }
+    }
 
     fn clean() -> Self {
         let steps = vec![
@@ -93,7 +94,7 @@ impl Recipe {
         ];
         Self::new(steps)
     }
-        fn grey() -> Self {
+    fn grey() -> Self {
         let steps = vec![
             Step {
                 tank_type: TankType::Etch,
@@ -178,25 +179,29 @@ impl Recipe {
     }
 }
 
-struct Tank { 
-    tank_type: TankType, 
+struct Tank {
+    tank_type: TankType,
     occupants: Vec<Basket>,
     max_occupancy: u8,
-} 
+}
 
-struct Machine { 
+struct Machine {
     tanks: Vec<Tank>,
 }
 
 impl Machine {
-    fn new(tanks: Vec<Tank>) -> Self { Self { tanks } }
+    fn new(tanks: Vec<Tank>) -> Self {
+        Self { tanks }
+    }
 
     fn tick(&mut self) {
         let mut tank_indices: Vec<usize> = Vec::new();
         let mut occupant_indices: Vec<usize> = Vec::new();
         for (i, tank) in self.tanks.iter().enumerate() {
             for (j, basket) in tank.occupants.iter().enumerate() {
-                if basket.status == BasketStatus::Processing || basket.status == BasketStatus::WaitingToMove {
+                if basket.status == BasketStatus::Processing
+                    || basket.status == BasketStatus::WaitingToMove
+                {
                     tank_indices.push(i);
                     occupant_indices.push(j);
                 }
@@ -206,66 +211,66 @@ impl Machine {
             if tank_indices.len() == 0 {
                 break;
             }
-            let b = &mut self.tanks[tank_indices.pop().unwrap()].occupants[occupant_indices.pop().unwrap()];
+            let b = &mut self.tanks[tank_indices.pop().unwrap()].occupants
+                [occupant_indices.pop().unwrap()];
             if b.recipe.steps[b.current_step.unwrap()].tick() {
                 b.status = BasketStatus::WaitingToMove;
             }
-
         }
     }
 
     fn umbra60_3t() -> Self {
-        let tanks = vec![ 
-            Tank { 
-                tank_type: TankType::Etch, 
+        let tanks = vec![
+            Tank {
+                tank_type: TankType::Etch,
                 occupants: Vec::new(),
-                max_occupancy: 2, 
-            }, 
-            Tank { 
-                tank_type: TankType::EtchRinse, 
-                occupants: Vec::new(),
-                max_occupancy: 1, 
-            }, 
-            Tank { 
-                tank_type: TankType::Clean, 
-                occupants: Vec::new(),
-                max_occupancy: 1, 
-            }, 
-            Tank { 
-                tank_type: TankType::CleanRinse, 
+                max_occupancy: 2,
+            },
+            Tank {
+                tank_type: TankType::EtchRinse,
                 occupants: Vec::new(),
                 max_occupancy: 1,
-            }, 
-            Tank { 
-                tank_type: TankType::DIRinse, 
+            },
+            Tank {
+                tank_type: TankType::Clean,
                 occupants: Vec::new(),
-                max_occupancy: 2, 
-            }, 
-            Tank { 
-                tank_type: TankType::Cool, 
+                max_occupancy: 1,
+            },
+            Tank {
+                tank_type: TankType::CleanRinse,
                 occupants: Vec::new(),
-                max_occupancy: 2,  
-            }, 
-            Tank { 
-                tank_type: TankType::Oven, 
-                occupants: Vec::new(), 
+                max_occupancy: 1,
+            },
+            Tank {
+                tank_type: TankType::DIRinse,
+                occupants: Vec::new(),
+                max_occupancy: 2,
+            },
+            Tank {
+                tank_type: TankType::Cool,
+                occupants: Vec::new(),
+                max_occupancy: 2,
+            },
+            Tank {
+                tank_type: TankType::Oven,
+                occupants: Vec::new(),
                 max_occupancy: 5,
-            }, 
-            Tank { 
-                tank_type: TankType::Grey, 
-                occupants: Vec::new(), 
-                max_occupancy: 1,
-            }, 
-            Tank { 
-                tank_type: TankType::Primer, 
-                occupants: Vec::new(), 
-                max_occupancy: 1,
-            }, 
-            Tank { 
-                tank_type: TankType::Lacquer, 
+            },
+            Tank {
+                tank_type: TankType::Grey,
                 occupants: Vec::new(),
                 max_occupancy: 1,
-            } 
+            },
+            Tank {
+                tank_type: TankType::Primer,
+                occupants: Vec::new(),
+                max_occupancy: 1,
+            },
+            Tank {
+                tank_type: TankType::Lacquer,
+                occupants: Vec::new(),
+                max_occupancy: 1,
+            },
         ];
         Self::new(tanks)
     }
@@ -291,8 +296,7 @@ impl Machine {
         }
     }
 }
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct Basket {
     recipe: Recipe,
     job_id: u64,
@@ -308,11 +312,15 @@ struct Robot {
 }
 
 impl Robot {
-    fn new() -> Self { 
+    fn new() -> Self {
         let status = RobotStatus::Idle;
         let time_remaining = 0;
         let basket = None;
-        Self { status, time_remaining, basket } 
+        Self {
+            status,
+            time_remaining,
+            basket,
+        }
     }
 
     fn tick(&mut self) {
@@ -329,8 +337,14 @@ impl Robot {
 impl Basket {
     fn new(recipe: Recipe, job_id: u64, status: BasketStatus) -> Self {
         let current_step = None;
-        let next_step = Some(0); 
-        Self { recipe, job_id, status, current_step, next_step } 
+        let next_step = Some(0);
+        Self {
+            recipe,
+            job_id,
+            status,
+            current_step,
+            next_step,
+        }
     }
 
     fn is_final_step(&self) -> bool {
@@ -339,7 +353,8 @@ impl Basket {
     }
 
     fn set_next_step(&mut self) {
-        let at_last_step: bool = self.current_step.unwrap() + 1 == self.recipe.steps.len().try_into().unwrap();
+        let at_last_step: bool =
+            self.current_step.unwrap() + 1 == self.recipe.steps.len().try_into().unwrap();
         if at_last_step {
             self.next_step = None;
         } else {
@@ -350,7 +365,11 @@ impl Basket {
         let mut did_print_something: bool = false;
         for step in self.recipe.steps.iter() {
             if step.actual_time != step.process_time {
-                println!("      Stuck at {:?} for {} extra seconds.", step.tank_type, step.actual_time - step.process_time);
+                println!(
+                    "      Stuck at {:?} for {} extra seconds.",
+                    step.tank_type,
+                    step.actual_time - step.process_time
+                );
                 did_print_something = true;
             }
         }
@@ -360,8 +379,8 @@ impl Basket {
     }
 }
 
-fn main() { 
-    println!("Hello, world!"); 
+fn main() {
+    println!("Hello, world!");
     let mut tank_pickup: Option<usize> = None;
     let mut position_pickup: Option<usize> = None;
 
@@ -378,7 +397,10 @@ fn main() {
         }
 
         //baskets.insert(0, Basket::new(Recipe::clean(), job_id, BasketStatus::WaitingToLoad));
-        baskets.insert(0, Basket::new(Recipe::grey(), job_id, BasketStatus::WaitingToLoad));
+        baskets.insert(
+            0,
+            Basket::new(Recipe::grey(), job_id, BasketStatus::WaitingToLoad),
+        );
         job_id += 1;
     }
 
@@ -390,22 +412,24 @@ fn main() {
                 basket.print_waiting_steps();
                 println!("\n");
             }
-            
+
             break;
         }
         // if >0 jobs in machine && all jobs @ 0 time && robot not moving then break would be better
         if elapsed_seconds > 60 * 60 * 24 {
             println!("Robot Stuck: Could not complete after in 1 simulated day.");
-            println!("Unloaded {} out of {} baskets.", unloaded_baskets.len(), number_of_jobs);
+            println!(
+                "Unloaded {} out of {} baskets.",
+                unloaded_baskets.len(),
+                number_of_jobs
+            );
             break;
         }
         if robot.status == RobotStatus::Idle {
-
             //Scan for a basket that is ready to move in the machine
             for (i, tank) in umbra60_3t.tanks.iter().enumerate() {
                 for (j, basket) in tank.occupants.iter().enumerate() {
                     if let BasketStatus::WaitingToMove = basket.status {
-
                         // first check if that basket needs to unload
                         if basket.is_final_step() {
                             println!("Robot will unload a basket");
@@ -416,16 +440,40 @@ fn main() {
                             let available: Option<bool>;
                             // if the next step is not unload, then check if the next tank is available to move to
                             match basket.recipe.steps[basket.next_step.unwrap()].tank_type {
-                                TankType::Etch => available = Some(umbra60_3t.is_tank_available(TankType::Etch)),
-                                TankType::EtchRinse => available = Some(umbra60_3t.is_tank_available(TankType::EtchRinse)),
-                                TankType::Clean => available = Some(umbra60_3t.is_tank_available(TankType::Clean)),
-                                TankType::CleanRinse => available = Some(umbra60_3t.is_tank_available(TankType::CleanRinse)),
-                                TankType::DIRinse => available = Some(umbra60_3t.is_tank_available(TankType::DIRinse)),
-                                TankType::Cool => available = Some(umbra60_3t.is_tank_available(TankType::Cool)),
-                                TankType::Oven => available = Some(umbra60_3t.is_tank_available(TankType::Oven)),
-                                TankType::Grey => available = Some(umbra60_3t.is_tank_available(TankType::Grey)),
-                                TankType::Primer => available = Some(umbra60_3t.is_tank_available(TankType::Primer)),
-                                TankType::Lacquer => available = Some(umbra60_3t.is_tank_available(TankType::Lacquer)),
+                                TankType::Etch => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Etch))
+                                }
+                                TankType::EtchRinse => {
+                                    available =
+                                        Some(umbra60_3t.is_tank_available(TankType::EtchRinse))
+                                }
+                                TankType::Clean => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Clean))
+                                }
+                                TankType::CleanRinse => {
+                                    available =
+                                        Some(umbra60_3t.is_tank_available(TankType::CleanRinse))
+                                }
+                                TankType::DIRinse => {
+                                    available =
+                                        Some(umbra60_3t.is_tank_available(TankType::DIRinse))
+                                }
+                                TankType::Cool => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Cool))
+                                }
+                                TankType::Oven => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Oven))
+                                }
+                                TankType::Grey => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Grey))
+                                }
+                                TankType::Primer => {
+                                    available = Some(umbra60_3t.is_tank_available(TankType::Primer))
+                                }
+                                TankType::Lacquer => {
+                                    available =
+                                        Some(umbra60_3t.is_tank_available(TankType::Lacquer))
+                                }
                             }
                             if available.unwrap() {
                                 println!("robot will move a basket");
@@ -435,9 +483,13 @@ fn main() {
                             }
                         }
                     }
-                    if robot.status != RobotStatus::Idle { break; }
+                    if robot.status != RobotStatus::Idle {
+                        break;
+                    }
                 }
-                if robot.status != RobotStatus::Idle { break; }
+                if robot.status != RobotStatus::Idle {
+                    break;
+                }
             }
 
             //After scanning unsuccessfully, try to load a new job
@@ -447,16 +499,36 @@ fn main() {
                     let available: Option<bool>;
                     // if the next step is no unload, then check if the next tank is available to move to
                     match b.recipe.steps[b.next_step.unwrap()].tank_type {
-                        TankType::Etch => available = Some(umbra60_3t.is_tank_available(TankType::Etch)),
-                        TankType::EtchRinse => available = Some(umbra60_3t.is_tank_available(TankType::EtchRinse)),
-                        TankType::Clean => available = Some(umbra60_3t.is_tank_available(TankType::Clean)),
-                        TankType::CleanRinse => available = Some(umbra60_3t.is_tank_available(TankType::CleanRinse)),
-                        TankType::DIRinse => available = Some(umbra60_3t.is_tank_available(TankType::DIRinse)),
-                        TankType::Cool => available = Some(umbra60_3t.is_tank_available(TankType::Cool)),
-                        TankType::Oven => available = Some(umbra60_3t.is_tank_available(TankType::Oven)),
-                        TankType::Grey => available = Some(umbra60_3t.is_tank_available(TankType::Grey)),
-                        TankType::Primer => available = Some(umbra60_3t.is_tank_available(TankType::Primer)),
-                        TankType::Lacquer => available = Some(umbra60_3t.is_tank_available(TankType::Lacquer)),
+                        TankType::Etch => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Etch))
+                        }
+                        TankType::EtchRinse => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::EtchRinse))
+                        }
+                        TankType::Clean => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Clean))
+                        }
+                        TankType::CleanRinse => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::CleanRinse))
+                        }
+                        TankType::DIRinse => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::DIRinse))
+                        }
+                        TankType::Cool => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Cool))
+                        }
+                        TankType::Oven => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Oven))
+                        }
+                        TankType::Grey => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Grey))
+                        }
+                        TankType::Primer => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Primer))
+                        }
+                        TankType::Lacquer => {
+                            available = Some(umbra60_3t.is_tank_available(TankType::Lacquer))
+                        }
                     }
                     if available.unwrap() {
                         let mut b = baskets.pop().unwrap();
@@ -473,7 +545,9 @@ fn main() {
         }
 
         if robot.status == RobotStatus::WillMove {
-            let mut b = umbra60_3t.tanks[tank_pickup.unwrap()].occupants.remove(position_pickup.unwrap());
+            let mut b = umbra60_3t.tanks[tank_pickup.unwrap()]
+                .occupants
+                .remove(position_pickup.unwrap());
             b.status = BasketStatus::Moving;
             robot.basket = Some(b);
             robot.status = RobotStatus::Moving;
@@ -489,7 +563,6 @@ fn main() {
                 robot.status = RobotStatus::Idle;
                 println!("Job Number {} unloaded", b.job_id);
                 unloaded_baskets.push(b);
-
             } else {
                 b.current_step = b.next_step;
                 b.set_next_step();
@@ -503,8 +576,4 @@ fn main() {
         umbra60_3t.tick();
         elapsed_seconds += 1;
     }
-
 }
-
-
-
