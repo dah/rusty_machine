@@ -1,5 +1,4 @@
-#[derive(PartialEq, Debug)]
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 enum TankType { 
     Etch, 
     EtchRinse, 
@@ -14,8 +13,7 @@ enum TankType {
 } 
 
 
-#[derive(PartialEq, Debug)]
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 enum BasketStatus {
     WaitingToLoad,
     Unloaded,
@@ -24,8 +22,7 @@ enum BasketStatus {
     Moving,
 }
 
-#[derive(PartialEq)]
-#[derive(Clone)]
+#[derive(PartialEq, Clone)]
 enum RobotStatus {
     Idle,
     WillMove,
@@ -53,8 +50,7 @@ impl Step {
         return false;
     }
 }
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct Recipe {
     steps: Vec<Step>,
 }
@@ -211,7 +207,7 @@ impl Machine {
                 break;
             }
             let b = &mut self.tanks[tank_indices.pop().unwrap()].occupants[occupant_indices.pop().unwrap()];
-            if b.recipe.steps[b.current_step.clone().unwrap()].tick() {
+            if b.recipe.steps[b.current_step.unwrap()].tick() {
                 b.status = BasketStatus::WaitingToMove;
             }
 
@@ -288,7 +284,7 @@ impl Machine {
         //basket.current_step += 1;
         basket.status = BasketStatus::Processing;
         for tank in self.tanks.iter_mut() {
-            if tank.tank_type == basket.recipe.steps[basket.current_step.clone().unwrap()].tank_type {
+            if tank.tank_type == basket.recipe.steps[basket.current_step.unwrap()].tank_type {
                 tank.occupants.push(basket);
                 break;
             }
@@ -343,11 +339,11 @@ impl Basket {
     }
 
     fn set_next_step(&mut self) {
-        let at_last_step: bool = self.current_step.clone().unwrap() + 1 == self.recipe.steps.len().try_into().unwrap();
+        let at_last_step: bool = self.current_step.unwrap() + 1 == self.recipe.steps.len().try_into().unwrap();
         if at_last_step {
             self.next_step = None;
         } else {
-            self.next_step = Some(self.next_step.clone().unwrap() + 1);
+            self.next_step = Some(self.next_step.unwrap() + 1);
         }
     }
     fn print_waiting_steps(&self) {
@@ -373,7 +369,7 @@ fn main() {
     let mut umbra60_3t: Machine = Machine::umbra60_3t();
     let mut baskets: Vec<Basket> = Vec::new();
     let mut unloaded_baskets: Vec<Basket> = Vec::new();
-    let number_of_jobs = 7;
+    let number_of_jobs = 5;
     let mut job_id: u64 = 0;
     let mut elapsed_seconds: u64 = 0;
     loop {
@@ -418,7 +414,7 @@ fn main() {
                             position_pickup = Some(j);
                         } else {
                             let available: Option<bool>;
-                            // if the next step is no unload, then check if the next tank is available to move to
+                            // if the next step is not unload, then check if the next tank is available to move to
                             match basket.recipe.steps[basket.next_step.unwrap()].tank_type {
                                 TankType::Etch => available = Some(umbra60_3t.is_tank_available(TankType::Etch)),
                                 TankType::EtchRinse => available = Some(umbra60_3t.is_tank_available(TankType::EtchRinse)),
@@ -447,7 +443,7 @@ fn main() {
             //After scanning unsuccessfully, try to load a new job
             if robot.status == RobotStatus::Idle {
                 if !baskets.is_empty() {
-                    let b = baskets.clone().pop().unwrap();
+                    let b = baskets.clone().pop().unwrap(); // Using clone here because we don't want to pop off the original stack
                     let available: Option<bool>;
                     // if the next step is no unload, then check if the next tank is available to move to
                     match b.recipe.steps[b.next_step.unwrap()].tank_type {
@@ -485,7 +481,7 @@ fn main() {
         }
 
         if robot.status == RobotStatus::DropOff {
-            let mut b = robot.basket.clone().unwrap();
+            let mut b = robot.basket.unwrap();
             if b.is_final_step() {
                 b.current_step = None;
                 robot.basket = None;
@@ -495,7 +491,7 @@ fn main() {
                 unloaded_baskets.push(b);
 
             } else {
-                b.current_step = b.next_step.clone();
+                b.current_step = b.next_step;
                 b.set_next_step();
                 robot.basket = None;
                 robot.status = RobotStatus::Idle;
