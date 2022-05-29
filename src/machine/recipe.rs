@@ -10,7 +10,9 @@ impl Recipe {
     pub fn new(steps: Vec<Step>) -> Self {
         Self { steps }
     }
+}
 
+impl Recipe {
     pub fn clean() -> Self {
         let steps = vec![
             Step {

@@ -6,6 +6,7 @@ use crate::machine::BasketStatus;
 use crate::machine::Machine;
 use crate::machine::RobotStatus;
 use crate::machine::TankType;
+use tabled::Table;
 
 fn main() {
     println!("Hello, world!");
@@ -16,7 +17,7 @@ fn main() {
     let mut umbra60_3t: Machine = Machine::umbra60_3t();
     let mut baskets: Vec<Basket> = Vec::new();
     let mut unloaded_baskets: Vec<Basket> = Vec::new();
-    let number_of_jobs = 5;
+    let number_of_jobs = 3;
     let mut job_id: u64 = 0;
     let mut elapsed_seconds: u64 = 0;
     loop {
@@ -37,7 +38,10 @@ fn main() {
             println!("\nFinished Unloading All Baskets\n");
             for basket in unloaded_baskets.iter() {
                 println!("***** Basket {}", basket.job_id);
-                basket.print_waiting_steps();
+                //basket.print_waiting_steps();
+                let steps = &basket.recipe.steps;
+                let table = Table::new(steps).to_string();
+                println!("{}", table);
                 println!("\n");
             }
 
@@ -60,7 +64,7 @@ fn main() {
                     if let BasketStatus::WaitingToMove = basket.status {
                         // first check if that basket needs to unload
                         if basket.is_final_step() {
-                            println!("Robot will unload a basket");
+                            println!("Robot will unload basket {}", basket.job_id);
                             robot.status = RobotStatus::WillMove;
                             tank_pickup = Some(i);
                             position_pickup = Some(j);
@@ -104,7 +108,11 @@ fn main() {
                                 }
                             }
                             if available.unwrap() {
-                                println!("robot will move a basket");
+                                println!(
+                                    "Robot will move basket:{} from step:{}",
+                                    basket.job_id,
+                                    basket.current_step.unwrap()
+                                );
                                 robot.status = RobotStatus::WillMove;
                                 tank_pickup = Some(i);
                                 position_pickup = Some(j);
@@ -166,7 +174,7 @@ fn main() {
                         robot.status = RobotStatus::Moving;
                         robot.time_remaining = 20;
                     } else {
-                        println!("Basket {} cannot begin loading", b.job_id);
+                        //println!("Basket {} cannot begin loading", b.job_id);
                     }
                 }
             }

@@ -25,7 +25,7 @@ impl Robot {
             self.time_remaining -= 1;
             if self.time_remaining < 1 {
                 self.status = RobotStatus::DropOff;
-                println!("robot dropoff");
+                //println!("robot dropoff");
             }
         }
     }
