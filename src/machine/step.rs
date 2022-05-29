@@ -8,6 +8,7 @@ pub struct Step {
     pub process_time: usize,
     pub actual_time: usize,
     pub remaining_time: usize,
+    pub extra_time: usize,
 }
 
 impl Step {
@@ -18,6 +19,8 @@ impl Step {
             if self.remaining_time == 0 {
                 return true;
             }
+        } else {
+            self.extra_time += 1;
         }
         return false;
     }
@@ -27,8 +30,8 @@ impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "({}, {}, {}, {})",
-            self.tank_type, self.process_time, self.actual_time, self.remaining_time
+            "({}, {}, {}, {}, {})",
+            self.tank_type, self.process_time, self.actual_time, self.remaining_time, self.extra_time
         )
     }
 }

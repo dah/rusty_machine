@@ -29,4 +29,18 @@ impl Robot {
             }
         }
     }
+
+    pub fn is_idle(&self) -> bool {
+        self.status == RobotStatus::Idle
+    }
+
+    pub fn dropoff_basket(&mut self) -> Basket {
+        if self.basket.is_none() {
+            panic!("Tried to drop off nonexistent basket");
+        } else {
+            let b = self.basket.as_ref().unwrap().clone();
+            //self.basket = None;
+            return b;
+        }
+    }
 }
