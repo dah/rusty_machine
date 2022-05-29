@@ -1,24 +1,24 @@
 use crate::machine::basket::Basket;
 use crate::machine::tank::Tank;
-use crate::Robot;
+use crate::machine::robot::Robot;
 use tabled::Table;
 
 use std::fmt;
 
 pub mod basket;
 pub mod recipe;
-pub mod robot;
-pub mod step;
-pub mod tank;
+mod robot;
+mod step;
+mod tank;
 
 pub struct Machine {
-    pub tanks: Vec<Tank>,
-    pub robot: Robot,
-    pub baskets: Vec<Basket>,
-    pub unloaded_baskets: Vec<Basket>,
-    pub elapsed_seconds: u64,
-    pub tank_pickup: Option<usize>,
-    pub position_pickup: Option<usize>,
+    tanks: Vec<Tank>,
+    robot: Robot,
+    baskets: Vec<Basket>,
+    unloaded_baskets: Vec<Basket>,
+    elapsed_seconds: u64,
+    tank_pickup: Option<usize>,
+    position_pickup: Option<usize>,
 }
 
 impl Machine {
@@ -210,7 +210,7 @@ impl Machine {
     }
 
     // These next two functions need cleaning up
-    pub fn is_tank_available(&self, tank_name: TankType) -> bool {
+    fn is_tank_available(&self, tank_name: TankType) -> bool {
         let mut available = false;
         for tank in self.tanks.iter() {
             if tank_name == tank.tank_type {
@@ -222,7 +222,7 @@ impl Machine {
         return available;
     }
 
-    pub fn is_next_tank_available(&self, tank_type: TankType) -> bool {
+    fn is_next_tank_available(&self, tank_type: TankType) -> bool {
         match tank_type {
             TankType::Etch => self.is_tank_available(TankType::Etch),
             TankType::EtchRinse => self.is_tank_available(TankType::EtchRinse),
@@ -237,7 +237,7 @@ impl Machine {
         }
     }
 
-    pub fn drop_off_basket(&mut self, mut basket: Basket) {
+    fn drop_off_basket(&mut self, mut basket: Basket) {
         //basket.current_step += 1;
         basket.status = BasketStatus::Processing;
         for tank in self.tanks.iter_mut() {
