@@ -11,9 +11,10 @@ pub struct Basket {
 }
 
 impl Basket {
-    pub fn new(recipe: Recipe, job_id: u64, status: BasketStatus) -> Self {
+    pub fn new(recipe: Recipe, job_id: u64) -> Self {
         let current_step = None;
         let next_step = Some(0);
+        let status = BasketStatus::WaitingToLoad;
         Self {
             recipe,
             job_id,

@@ -28,7 +28,7 @@ fn main() {
         //baskets.insert(0, Basket::new(Recipe::clean(), job_id, BasketStatus::WaitingToLoad));
         baskets.insert(
             0,
-            Basket::new(Recipe::grey(), job_id, BasketStatus::WaitingToLoad),
+            Basket::new(Recipe::grey(), job_id),
         );
         job_id += 1;
     }
