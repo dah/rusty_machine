@@ -106,9 +106,9 @@ impl Recipe {
             },
             Step {
                 tank_type: TankType::Oven,
-                process_time: 1200,
+                process_time: 1800,
                 actual_time: 0,
-                remaining_time: 1200,
+                remaining_time: 1800,
                 extra_time: 0,
             },
             Step {

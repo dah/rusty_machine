@@ -85,43 +85,9 @@ impl Machine {
                                 self.tank_pickup = Some(i);
                                 self.position_pickup = Some(j);
                             } else {
-                                let available: Option<bool>;
-                                // if the next step is not unload, then check if the next tank is available to move to
-                                match basket.recipe.steps[basket.next_step.unwrap()].tank_type {
-                                    TankType::Etch => {
-                                        available = Some(self.is_tank_available(TankType::Etch))
-                                    }
-                                    TankType::EtchRinse => {
-                                        available =
-                                            Some(self.is_tank_available(TankType::EtchRinse))
-                                    }
-                                    TankType::Clean => {
-                                        available = Some(self.is_tank_available(TankType::Clean))
-                                    }
-                                    TankType::CleanRinse => {
-                                        available =
-                                            Some(self.is_tank_available(TankType::CleanRinse))
-                                    }
-                                    TankType::DIRinse => {
-                                        available = Some(self.is_tank_available(TankType::DIRinse))
-                                    }
-                                    TankType::Cool => {
-                                        available = Some(self.is_tank_available(TankType::Cool))
-                                    }
-                                    TankType::Oven => {
-                                        available = Some(self.is_tank_available(TankType::Oven))
-                                    }
-                                    TankType::Grey => {
-                                        available = Some(self.is_tank_available(TankType::Grey))
-                                    }
-                                    TankType::Primer => {
-                                        available = Some(self.is_tank_available(TankType::Primer))
-                                    }
-                                    TankType::Lacquer => {
-                                        available = Some(self.is_tank_available(TankType::Lacquer))
-                                    }
-                                }
-                                if available.unwrap() {
+                                if self.is_next_tank_available(
+                                    basket.recipe.steps[basket.next_step.unwrap()].tank_type,
+                                ) {
                                     println!(
                                         "Robot will move basket:{} from step:{}",
                                         basket.job_id,
@@ -147,33 +113,7 @@ impl Machine {
             if self.robot.is_idle() {
                 if !self.baskets.is_empty() {
                     let b = self.baskets.clone().pop().unwrap(); // Using clone here because we don't want to pop off the original stack
-                    let available: Option<bool>;
-                    // if the next step is no unload, then check if the next tank is available to move to
-                    match b.recipe.steps[b.next_step.unwrap()].tank_type {
-                        TankType::Etch => available = Some(self.is_tank_available(TankType::Etch)),
-                        TankType::EtchRinse => {
-                            available = Some(self.is_tank_available(TankType::EtchRinse))
-                        }
-                        TankType::Clean => {
-                            available = Some(self.is_tank_available(TankType::Clean))
-                        }
-                        TankType::CleanRinse => {
-                            available = Some(self.is_tank_available(TankType::CleanRinse))
-                        }
-                        TankType::DIRinse => {
-                            available = Some(self.is_tank_available(TankType::DIRinse))
-                        }
-                        TankType::Cool => available = Some(self.is_tank_available(TankType::Cool)),
-                        TankType::Oven => available = Some(self.is_tank_available(TankType::Oven)),
-                        TankType::Grey => available = Some(self.is_tank_available(TankType::Grey)),
-                        TankType::Primer => {
-                            available = Some(self.is_tank_available(TankType::Primer))
-                        }
-                        TankType::Lacquer => {
-                            available = Some(self.is_tank_available(TankType::Lacquer))
-                        }
-                    }
-                    if available.unwrap() {
+                    if self.is_next_tank_available(b.recipe.steps[b.next_step.unwrap()].tank_type) {
                         let mut b = self.baskets.pop().unwrap();
                         b.status = BasketStatus::Moving;
                         println!("Basket {} begins loading", b.job_id);
@@ -269,6 +209,7 @@ impl Machine {
         self.elapsed_seconds += 1;
     }
 
+    // These next two functions need cleaning up
     pub fn is_tank_available(&self, tank_name: TankType) -> bool {
         let mut available = false;
         for tank in self.tanks.iter() {
@@ -280,6 +221,22 @@ impl Machine {
         }
         return available;
     }
+
+    pub fn is_next_tank_available(&self, tank_type: TankType) -> bool {
+        match tank_type {
+            TankType::Etch => self.is_tank_available(TankType::Etch),
+            TankType::EtchRinse => self.is_tank_available(TankType::EtchRinse),
+            TankType::Clean => self.is_tank_available(TankType::Clean),
+            TankType::CleanRinse => self.is_tank_available(TankType::CleanRinse),
+            TankType::DIRinse => self.is_tank_available(TankType::DIRinse),
+            TankType::Cool => self.is_tank_available(TankType::Cool),
+            TankType::Oven => self.is_tank_available(TankType::Oven),
+            TankType::Grey => self.is_tank_available(TankType::Grey),
+            TankType::Primer => self.is_tank_available(TankType::Primer),
+            TankType::Lacquer => self.is_tank_available(TankType::Lacquer),
+        }
+    }
+
     pub fn drop_off_basket(&mut self, mut basket: Basket) {
         //basket.current_step += 1;
         basket.status = BasketStatus::Processing;
@@ -292,7 +249,7 @@ impl Machine {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum TankType {
     Etch,
     EtchRinse,
