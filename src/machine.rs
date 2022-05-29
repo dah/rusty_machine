@@ -48,7 +48,6 @@ impl Machine {
         loop {
             // Check if run is complete and break out from loop
             if self.baskets.is_empty() && self.is_empty() {
-                println!("\nFinished Unloading All Baskets\n");
                 for basket in self.unloaded_baskets.iter() {
                     println!("***** Basket {}", basket.job_id);
                     //basket.print_waiting_steps();
@@ -57,7 +56,7 @@ impl Machine {
                     println!("{}", table);
                     println!("\n");
                 }
-
+                println!("\nFinished Unloading All Baskets in {} seconds\n", self.elapsed_seconds);
                 break;
             }
 

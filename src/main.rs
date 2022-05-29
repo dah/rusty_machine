@@ -15,7 +15,7 @@ fn main() {
             break;
         }
 
-        baskets.insert(0, Basket::new(Recipe::grey(), job_id));
+        baskets.insert(0, Basket::new(Recipe::hc(), job_id));
         job_id += 1;
     }
 
