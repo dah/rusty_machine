@@ -1,6 +1,6 @@
 use crate::machine::basket::Basket;
-use crate::machine::tank::Tank;
 use crate::machine::robot::Robot;
+use crate::machine::tank::Tank;
 use tabled::Table;
 
 use std::fmt;
@@ -56,7 +56,10 @@ impl Machine {
                     println!("{}", table);
                     println!("\n");
                 }
-                println!("\nFinished Unloading All Baskets in {} seconds\n", self.elapsed_seconds);
+                println!(
+                    "\nFinished Unloading All Baskets in {} seconds\n",
+                    self.elapsed_seconds
+                );
                 break;
             }
 

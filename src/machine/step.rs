@@ -31,7 +31,11 @@ impl fmt::Display for Step {
         write!(
             f,
             "({}, {}, {}, {}, {})",
-            self.tank_type, self.process_time, self.actual_time, self.remaining_time, self.extra_time
+            self.tank_type,
+            self.process_time,
+            self.actual_time,
+            self.remaining_time,
+            self.extra_time
         )
     }
 }
